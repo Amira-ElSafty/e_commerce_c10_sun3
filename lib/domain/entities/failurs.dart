@@ -1,4 +1,4 @@
-class Failures{   ///  parent calss
+class Failures{   ///  parent class
   String? errorMessage ;
   Failures({required this.errorMessage});
 }

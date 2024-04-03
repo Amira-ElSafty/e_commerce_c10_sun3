@@ -5,7 +5,9 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_e_commerce_c10_sun3/data/api/ApiConstatnts.dart';
 import 'package:flutter_e_commerce_c10_sun3/data/model/request/LoginRequest.dart';
 import 'package:flutter_e_commerce_c10_sun3/data/model/request/RegisterRequest.dart';
+import 'package:flutter_e_commerce_c10_sun3/data/model/response/CategoryOrBrandResponseDto.dart';
 import 'package:flutter_e_commerce_c10_sun3/data/model/response/LoginResponseDto.dart';
+import 'package:flutter_e_commerce_c10_sun3/data/model/response/ProductResponseDto.dart';
 import 'package:flutter_e_commerce_c10_sun3/data/model/response/RegisterResponseDto.dart';
 import 'package:flutter_e_commerce_c10_sun3/domain/entities/failurs.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +27,7 @@ class ApiManager {
         .checkConnectivity(); // User defined class
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoint.registerApi);
+      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoints.registerApi);
       var registerRequest = RegisterRequest(
           name: name,
           email: email,
@@ -57,7 +59,7 @@ class ApiManager {
         .checkConnectivity(); // User defined class
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoint.loginApi);
+      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoints.loginApi);
       var loginRequest = LoginRequest(
         email: email,
         password: password
@@ -70,6 +72,69 @@ class ApiManager {
         return Right(loginResponse);
       }else{
         return Left(ServerError(errorMessage: loginResponse.message
+        ));
+      }
+    }else{
+      // no internet connection
+      return Left(NetworkError(errorMessage: 'Please check Internet Connection'));
+    }
+  }
+
+  Future<Either<Failures, CategoryOrBrandResponseDto>> getCategories() async {
+    var connectivityResult = await Connectivity().checkConnectivity(); // User defined class
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoints.getAllCategoriesApi);
+      var response = await http.get(url);
+      var categoryResponse = CategoryOrBrandResponseDto.fromJson(
+          jsonDecode(response.body));
+      if(response.statusCode >= 200 && response.statusCode < 300){
+        // success
+        return Right(categoryResponse);
+      }else{
+        return Left(ServerError(errorMessage: categoryResponse.message
+        ));
+      }
+    }else{
+      // no internet connection
+      return Left(NetworkError(errorMessage: 'Please check Internet Connection'));
+    }
+  }
+
+  Future<Either<Failures, CategoryOrBrandResponseDto>> getBrands() async {
+    var connectivityResult = await Connectivity().checkConnectivity(); // User defined class
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoints.getAllBrandsApi);
+      var response = await http.get(url);
+      var brandResponse = CategoryOrBrandResponseDto.fromJson(
+          jsonDecode(response.body));
+      if(response.statusCode >= 200 && response.statusCode < 300){
+        // success
+        return Right(brandResponse);
+      }else{
+        return Left(ServerError(errorMessage: brandResponse.message
+        ));
+      }
+    }else{
+      // no internet connection
+      return Left(NetworkError(errorMessage: 'Please check Internet Connection'));
+    }
+  }
+
+  Future<Either<Failures, ProductResponseDto>> getProducts() async {
+    var connectivityResult = await Connectivity().checkConnectivity(); // User defined class
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      Uri url = Uri.https(ApiConstants.baseUrl, ApiEndPoints.getAllProductsApi);
+      var response = await http.get(url);
+      var productResponse = ProductResponseDto.fromJson(
+          jsonDecode(response.body));
+      if(response.statusCode >= 200 && response.statusCode < 300){
+        // success
+        return Right(productResponse);
+      }else{
+        return Left(ServerError(errorMessage: productResponse.message
         ));
       }
     }else{
