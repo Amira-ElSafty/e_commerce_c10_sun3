@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_e_commerce_c10_sun3/domain/di.dart';
 import 'package:flutter_e_commerce_c10_sun3/ui/auth/login/cubit/login_screen_view_model.dart';
 import 'package:flutter_e_commerce_c10_sun3/ui/auth/login/cubit/states.dart';
+import 'package:flutter_e_commerce_c10_sun3/ui/home/home_screen/home_screen_view.dart';
 import 'package:flutter_e_commerce_c10_sun3/ui/utils/dialog_utils.dart';
+import 'package:flutter_e_commerce_c10_sun3/ui/utils/shared_preference.dart';
 import '../../utils/my_colors.dart';
 import '../../utils/text_field_item.dart';
 import '../register/register_screen.dart';
@@ -35,7 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
           DialogUtils.hideLoading(context);
           DialogUtils.showMessage(context, state.authResultEntity
           .userEntity?.name ?? '',title: 'Success');
+          // save token
+          SharedPreference.saveData(key: 'Token', value:state.authResultEntity
+          .token);
+          Navigator.of(context).pushReplacementNamed(HomeScreenView.routeName);
         }
+
         },
       child:Scaffold(
         body: Container(
